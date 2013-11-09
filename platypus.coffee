@@ -1,4 +1,6 @@
 express = require 'express'
+{ScoreCalculator} = require './score_calculator'
+calc = new ScoreCalculator
 app = express()
 app.use express.bodyParser()
 
