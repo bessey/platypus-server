@@ -20,57 +20,72 @@ class GameStateMachine
       when "voting" then @_voting()
       when "summary" then @_summary()
 
+  #### STATES ####
+
   # transition on: last player entering game
   _matchmaking: ->
     console.log("_matchmaking")
     if @game.player_count is @player_cap
-      @_set_state("picking_colour")
-      @timeout_id = setTimeout(@_move_to_playing, @timeout_length)
+      @_move_to_picking()
 
   # transition on: time runs out
   # transition on: last colour picked
   _picking_colour: ->
     console.log("_picking_colour")
     if @game.colours_picked is @player_cap - 1
-      clearTimeout(@timeout_id)
       @_move_to_playing()
-      @timeout_id = setTimeout(@_move_to_voting, @timeout_length)
 
   # transition on: correct guess
   # transition on: time runs out
   _playing: ->
     console.log("_playing")
     if @_correct_guess()
-      clearTimeout(@timeout_id)
-      @_set_state("voting")
-      @timeout_id = setTimeout(@_move_to_summary, @timeout_length)
+      @_move_to_voting()
 
   # transition on: last player votes
   # transition on: time runs out
   _voting: ->
     console.log("_voting")
     if @_all_voted()
-      clearTimeout(@timeout_id)
-      @_set_state("summary")
+      @_move_to_summary()
 
   # transition on: player leaves
   _summary: ->
     console.log("_summary")
     @_calculate_scores()
 
-  _set_state: (new_state) ->
-    @state_node.set(new_state)
+  #### TRANSITITIONS ####
+
+  _move_to_picking: ->
+    @_set_state("picking_colour")
+    @timeout_id = setTimeout(@_move_to_playing, @timeout_length)    
 
   _move_to_playing: ->
+    clearTimeout(@timeout_id)
+    @timeout_id = setTimeout(@_move_to_voting, @timeout_length)
     guesses_node.on("child_added", @_check_guess)
     @_set_state("playing")
 
   _move_to_voting: ->
+    clearTimeout(@timeout_id)
+    @timeout_id = setTimeout(@_move_to_summary, @timeout_length)
+    guesses_node.off("child_added", @_check_guess)
     @_set_state("voting")
 
   _move_to_summary: ->
+    clearTimeout(@timeout_id)
     @_set_state("summary")
 
-  _correct_guess: ->
+  #### UTILITY ####
+
+  _check_guess: (new_guess) -> 
+    if new_guess.val().guess is @game.word
+      @_move_to_voting()
+
+  _set_state: (new_state) ->
+    @state_node.set(new_state)
+
+  _calculate_scores: ->
+    # write me
 
 exports.GameStateMachine = GameStateMachine
