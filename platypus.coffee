@@ -4,12 +4,7 @@ Firebase = require 'firebase'
 app = express()
 games_list = new Firebase 'https://platypus-launchhack.firebaseio.com/games'
 
-{ScoreCalculator} = require './score_calculator'
-{Dictionary} = require './dictionary'
 {MatchMaker} = require './match_maker'
-
-calc = new ScoreCalculator
-dic = new Dictionary
 matcher = new MatchMaker
 
 exports.player_cap = 3
@@ -38,7 +33,7 @@ add_to_unfilled_games_list = (snapshot) ->
 
 games_list.on 'child_added', (snapshot) -> 
   update_unfilled_games_list(snapshot)
-  console.log("child_added:   #{MatchMaker.UNFILLED_GAMES}")
+  console.log("child_added: #{MatchMaker.UNFILLED_GAMES}")
 
 games_list.on 'child_changed', (snapshot) -> 
   update_unfilled_games_list(snapshot)
