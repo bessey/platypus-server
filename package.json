@@ -1,0 +1,33 @@
+{
+	"name": "platypus-server",
+	"preferGlobal": false,
+	"version": "0.0.1",
+	"author": "Team Platypus",
+	"description": "",
+	"license": "MIT",
+	"engines": {
+		"node": ">=0.10"
+	},
+	"contributors": [
+		{
+			"name": "Chris Atkin",
+			"email": "me@chrisatk.in"
+		},
+		{
+			"name": "Matt Bessey",
+			"email": "bessey@gmail.com"
+		}
+	],
+	"dependencies": {
+		"firebase": "0.6.x",
+		"coffee-script": "1.6.x",
+		"express": "3.4.x" 
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:bessey/platypus-server.git"
+	},
+	"scripts": {
+		"start": "coffee platypus.coffee"
+	}
+}
