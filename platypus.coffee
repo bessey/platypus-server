@@ -1,6 +1,8 @@
 express = require 'express'
 {ScoreCalculator} = require './score_calculator'
+{Dictionary} = require './dictionary'
 calc = new ScoreCalculator
+dic = new Dictionary
 app = express()
 app.use express.bodyParser()
 
