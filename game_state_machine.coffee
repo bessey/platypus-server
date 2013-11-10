@@ -10,7 +10,6 @@ class GameStateMachine
     @matchmaking_factor = 1
     @playing_factor = 10 # how much longer is a round than the base as a factor
     @voting_factor = 2
-    @first_run = true
     @players = 0
 
     @calc = new ScoreCalculator(@player_cap)
@@ -21,9 +20,6 @@ class GameStateMachine
 
   update: (game) => 
     @game = game.val()
-    if @first_run
-      @first_run = false
-      @players_node.on('child_added', @_assign_role)
 
     switch @game.state
       when "matchmaking" then @_matchmaking()
@@ -66,7 +62,6 @@ class GameStateMachine
   #### TRANSITITIONS ####
 
   _move_to_picking: =>
-    @players_node.off('child_added', @_assign_role)
     @_set_state("picking_colour")
     @timeout_id = setTimeout(@_move_to_playing, @timeout_length * config.factors.matchmaking)    
 
@@ -93,16 +88,6 @@ class GameStateMachine
     @_set_state("summary")
 
   #### UTILITY ####
-
-  _assign_role: (new_player) ->
-    @players += 1
-    if not @guesser_set? and Math.random(1) > ((config.player_cap - 1) / config.player_cap)
-      @guesser_set = true
-      new_player.ref().child('role').set('guesser')
-    else if not @guesser_set? and @players is config.player_cap
-      new_player.ref().child('role').set('guesser')
-    else
-      new_player.ref().child('role').set('drawer')
 
   _check_guess: (new_guess) -> 
     if new_guess.val().guess is @game.word

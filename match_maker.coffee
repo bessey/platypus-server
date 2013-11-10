@@ -13,17 +13,27 @@ class MatchMaker
 
   match: (fb_id, response) ->
     @constructor.UNMATCHED_PLAYERS[fb_id] = response
-    @new_game() if Object.keys(@constructor.UNMATCHED_PLAYERS).length >= config.player_cap
+    if Object.keys(@constructor.UNMATCHED_PLAYERS).length >= config.player_cap
+      console.log "UNMATCHED_PLAYERS"
+      console.log @constructor.UNMATCHED_PLAYERS
+      @new_game()
 
-  new_game: () ->
+  new_game: ->
     console.log("new game");
-    console.log @game_list
 
     game = {
       player_count: 0,
       started_at: new Date().getTime(),
       state: "matchmaking"
     }
+    players = {}
+    @p_c = 0
+    for fb_id, response in @constructor.UNMATCHED_PLAYERS
+      players[fb_id] = {
+        fb_id: fb_id,
+        role: @_role(),
+      }
+    game.players = players
     game_ref = @game_list.push()
     game_ref.set(game)
     @dict.random_word(game_ref.name(), @_word_assigner)
@@ -33,7 +43,7 @@ class MatchMaker
     for fb_id, response of @constructor.UNMATCHED_PLAYERS
       @_respond_to fb_id, response, game_ref.name()
 
-    @constructor.UNMATCHED_PLAYERS = []
+    @constructor.UNMATCHED_PLAYERS = {}
 
   _respond_to: (fb_id, response, game_id) ->
     response.json {fb_id: fb_id, game_id: game_id}
@@ -49,5 +59,17 @@ class MatchMaker
     console.log(game_name, word)
     word_node = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games/#{game_name}/word"
     word_node.set(word)
+
+  _role: ->
+    @p_c =+ 1
+    if not @guesser_set? and Math.random(1) > ((config.player_cap - 1) / config.player_cap)
+      @guesser_set = true
+      return 'guesser'
+    else if not @guesser_set? and @players is config.player_cap
+      return 'guesser'
+    else
+      return 'drawer'
+
+
 
 exports.MatchMaker = MatchMaker
