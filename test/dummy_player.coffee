@@ -26,11 +26,17 @@ class DummyPlayer
     }
 
     # Set up the request
+    object = null
     post_req = http.request(post_options, (res) ->
+      response_string = ''
       res.setEncoding('utf8')
       res.on('data', (chunk) -> 
-        console.log('Response: ' + chunk)
-        response_callback(chunk["game_id"])
+        response_string += chunk
+      )
+      res.on('end', () ->
+        object = JSON.parse(response_string)
+        #console.log object
+        response_callback(object['game_id'])
       )
     )
 
