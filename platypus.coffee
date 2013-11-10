@@ -13,7 +13,7 @@ app = express()
 app.use express.bodyParser()
 
 app.get '/', (req, res) ->
-  res.send 'hello world'
+  res.send 'hello, platypus'
 
 app.post '/match-make', (req, res) ->
   fb_id = req.body.fb_id || null

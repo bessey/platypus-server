@@ -5,7 +5,10 @@ class GameStateMachine
   constructor: (game_ref, player_cap = 5) ->
     @id = game_ref
     @player_cap = player_cap
-    @timeout_length = 3000
+    @timeout_length = 3000 # base length of a time (ms) within a state
+    @matchmaking_factor = 1
+    @playing_factor = 10 # how much longer is a round than the base as a factor
+    @voting_factor = 2
     @calc = new ScoreCalculator
     @guesses_node = new Firebase "https://platypus-launchhack.firebaseio.com/games/#{@id}/guesses"
     @state_node   = new Firebase "https://platypus-launchhack.firebaseio.com/games/#{@id}/state"
@@ -58,17 +61,17 @@ class GameStateMachine
 
   _move_to_picking: ->
     @_set_state("picking_colour")
-    @timeout_id = setTimeout(@_move_to_playing, @timeout_length)    
+    @timeout_id = setTimeout(@_move_to_playing, @timeout_length * @matchmaking_factor)    
 
   _move_to_playing: ->
     clearTimeout(@timeout_id)
-    @timeout_id = setTimeout(@_move_to_voting, @timeout_length)
+    @timeout_id = setTimeout(@_move_to_voting, @timeout_length * @playing_factor)
     guesses_node.on("child_added", @_check_guess)
     @_set_state("playing")
 
   _move_to_voting: ->
     clearTimeout(@timeout_id)
-    @timeout_id = setTimeout(@_move_to_summary, @timeout_length)
+    @timeout_id = setTimeout(@_move_to_summary, @timeout_length * @voting_factor)
     guesses_node.off("child_added", @_check_guess)
     @_set_state("voting")
 
