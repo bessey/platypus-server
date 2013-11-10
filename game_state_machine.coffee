@@ -63,7 +63,6 @@ class GameStateMachine
   _move_to_playing: =>
     clearTimeout(@timeout_id)
     @timeout_id = setTimeout(@_move_to_voting, @timeout_length * @playing_factor)
-    console.log @guesses_node
     @guesses_node.on("child_added", @_check_guess)
     @_set_state("playing")
 
