@@ -11,12 +11,13 @@ class GameStateMachine
     @playing_factor = 10 # how much longer is a round than the base as a factor
     @voting_factor = 2
     @first_run = true
+    @players = 0
 
     @calc = new ScoreCalculator(@player_cap)
-    @guesses_node = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games/#{@id}/guesses"
-    @state_node   = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games/#{@id}/state"
-    @players_node = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games/#{@id}/players"
-    @votes_node   = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games/#{@id}/votes"
+    @guesses_node = game_ref.child "guesses"
+    @state_node   = game_ref.child "state"
+    @players_node = game_ref.child "players"
+    @votes_node   = game_ref.child "votes"
 
   update: (game) => 
     @game = game.val()
@@ -94,8 +95,11 @@ class GameStateMachine
   #### UTILITY ####
 
   _assign_role: (new_player) ->
+    @players += 1
     if not @guesser_set? and Math.random(1) > ((config.player_cap - 1) / config.player_cap)
       @guesser_set = true
+      new_player.ref().child('role').set('guesser')
+    else if not @guesser_set? and @players is config.player_cap
       new_player.ref().child('role').set('guesser')
     else
       new_player.ref().child('role').set('drawer')
