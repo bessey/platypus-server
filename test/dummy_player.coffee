@@ -43,9 +43,8 @@ class DummyPlayer
     post_req.write(post_data);
     post_req.end();
 
-  join_game: (game_id) =>
+  join_game: (game_id, on_join_callback) =>
     @game_ref     = new Firebase "http://#{process.env.FIREBASE_ENDPOINT}/games/#{game_id}"
-    @game_ref.once('value', @_inc_player_count)
     @players_ref  = @game_ref.child "players"
     @guesses_ref  = @game_ref.child "guesses"
     @votes_ref    = @game_ref.child "votes"
@@ -80,9 +79,5 @@ class DummyPlayer
         color_id: color_id,
         is_end: is_end
       })
-
-  _inc_player_count: (game_ref) ->
-    incremented = game_ref.val().player_count + 1
-    game_ref.ref().set(player_count: incremented)
 
 exports.DummyPlayer = DummyPlayer

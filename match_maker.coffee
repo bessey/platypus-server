@@ -14,17 +14,14 @@ class MatchMaker
   match: (fb_id, response) ->
     @constructor.UNMATCHED_PLAYERS[fb_id] = response
     if Object.keys(@constructor.UNMATCHED_PLAYERS).length >= config.player_cap
-      console.log "UNMATCHED_PLAYERS"
-      console.log @constructor.UNMATCHED_PLAYERS
       @new_game()
 
   new_game: ->
     console.log("new game");
 
     game = {
-      player_count: 0,
       started_at: new Date().getTime(),
-      state: "matchmaking"
+      state: "picking_colour"
     }
     players = {}
     @p_c = 0
