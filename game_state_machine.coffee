@@ -78,8 +78,8 @@ class GameStateMachine
   _move_to_voting: =>
     clearTimeout(@timeout_id)
     @timeout_id = setTimeout(@_move_to_summary, @timeout_length * @voting_factor)
-    guesses_node.off("child_added", @_check_guess)
-    players_node.on('child_added', @_update_scores)
+    @guesses_node.off("child_added", @_check_guess)
+    @players_node.on('child_added', @_update_scores)
     @_set_state("voting")
     @votes_node.on("child_added", @_check_vote)
 
@@ -107,6 +107,6 @@ class GameStateMachine
     @state_node.set(new_state)
 
   _update_scores: (snapshot) ->
-    @
+    console.log snapshot
 
 exports.GameStateMachine = GameStateMachine
