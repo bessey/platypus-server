@@ -37,21 +37,7 @@ class MatchMaker
 
   _respond_to: (fb_id, response, game_id) ->
     response.json {fb_id: fb_id, game_id: game_id}
-
-  create_new_game: (fb_id, response) ->
-    game = {
-      player_count: 0,
-      started_at: new Date().getTime(),
-      state: "matchmaking"
-    }
-    game_ref = @game_list.push()
-    game_ref.set(game)
-    @dict.random_word(game_ref.name(), @_word_assigner)
-    state_machine = new GameStateMachine(game_ref)
-    game_ref.on('value', state_machine.update)
-
-    response.json { fb_id: fb_id, game_id: game_ref.name() } 
-
+    
   find_unfilled_game: (fb_id, response) ->
     if @constructor.UNFILLED_GAMES.length > 0
       response.json { fb_id: fb_id, game_id: @constructor.UNFILLED_GAMES[0] }
