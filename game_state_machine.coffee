@@ -11,6 +11,7 @@ class GameStateMachine
     @playing_factor = 10 # how much longer is a round than the base as a factor
     @voting_factor = 2
     @players = 0
+    @first_time = true
 
     @calc = new ScoreCalculator(@player_cap)
     @guesses_node = game_ref.child "guesses"
@@ -20,6 +21,9 @@ class GameStateMachine
 
   update: (game) => 
     @game = game.val()
+    if @first_time
+      @first_time = false
+      @timeout_id = setTimeout(@_move_to_playing, @timeout_length * config.factors.matchmaking)
 
     switch @game.state
       when "matchmaking" then @_matchmaking()
@@ -29,12 +33,6 @@ class GameStateMachine
       when "summary" then @_summary()
 
   #### STATES ####
-
-  # transition on: last player entering game
-  _matchmaking: =>
-    console.log("_matchmaking")
-    if @game.player_count is @player_cap
-      @_move_to_picking()
 
   # transition on: time runs out
   # transition on: last colour picked
@@ -60,10 +58,6 @@ class GameStateMachine
     #@_calculate_scores()
 
   #### TRANSITITIONS ####
-
-  _move_to_picking: =>
-    @_set_state("picking_colour")
-    @timeout_id = setTimeout(@_move_to_playing, @timeout_length * config.factors.matchmaking)    
 
   _move_to_playing: =>
     clearTimeout(@timeout_id)

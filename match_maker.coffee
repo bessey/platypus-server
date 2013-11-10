@@ -13,6 +13,7 @@ class MatchMaker
 
   match: (fb_id, response) ->
     @constructor.UNMATCHED_PLAYERS[fb_id] = response
+    console.log("test")
     if Object.keys(@constructor.UNMATCHED_PLAYERS).length >= config.player_cap
       @new_game()
 
@@ -31,6 +32,9 @@ class MatchMaker
     @player_count = 0
     game_ref = @game_list.push()
     game_ref.set(game)  
+
+    for fb_id, response of @constructor.UNMATCHED_PLAYERS
+      @_respond_to fb_id, response, game_ref.name()
 
     @dict.random_word(game_ref.name(), @_word_assigner)
     state_machine = new GameStateMachine(game_ref)
