@@ -1,13 +1,11 @@
-Firebase = require 'firebase'
-fb_endpoint = 'http://platypus-launchhack-test.firebaseIO.com'
-
+Firebase    = require 'firebase'
 querystring = require 'querystring'
-http = require 'http'
+http        = require 'http'
 
 stress_test_room_creation = ->
 
 _connect_to_game = (game_id, player_count = 1) ->
-  game = new Firebase "#{fb_endpoint}/games/#{game_id}"
+  game = new Firebase "#{process.env.FIREBASE_TEST_ENDPOINT}/games/#{game_id}"
   game.set({player_count: player_count})
 
 _match_make =  ->
