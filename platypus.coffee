@@ -2,8 +2,8 @@ express = require 'express'
 Firebase = require 'firebase'
 
 app = express()
-games_list = new Firebase 'https://platypus-launchhack.firebaseio.com/games'
-
+games_list = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games"
+games_list.set(null)
 {MatchMaker} = require './match_maker'
 matcher = new MatchMaker
 

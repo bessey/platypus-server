@@ -6,7 +6,7 @@ class MatchMaker
   @UNFILLED_GAMES = []
 
   constructor: ->
-    @game_list = new Firebase 'https://platypus-launchhack.firebaseio.com/games'
+    @game_list = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games"
     @dict = new Dictionary
 
   match: (fb_id, response) ->
@@ -36,7 +36,7 @@ class MatchMaker
 
   _word_assigner: (game_name, word) ->
     console.log(game_name, word)
-    word_node = new Firebase "https://platypus-launchhack.firebaseio.com/games/#{game_name}/word"
+    word_node = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games/#{game_name}/word"
     word_node.set(word)
 
 exports.MatchMaker = MatchMaker
