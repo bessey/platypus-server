@@ -91,10 +91,11 @@ class GameStateMachine
   #### UTILITY ####
 
   _assign_role: (new_player) ->
-    if Math.random(1) > ((config.player_cap - 1) / config.player_cap)
-      new_player.child('role').set('guesser')
+    if not @guesser_set? and Math.random(1) > ((config.player_cap - 1) / config.player_cap)
+      @guesser_set = true
+      new_player.ref().child('role').set('guesser')
     else
-      new_player.child('role').set('drawer')
+      new_player.ref().child('role').set('drawer')
 
   _check_guess: (new_guess) -> 
     if new_guess.val().guess is @game.word
