@@ -46,10 +46,10 @@ class DummyPlayer
   join_game: (game_id) =>
     @game_ref     = new Firebase "http://#{process.env.FIREBASE_ENDPOINT}/games/#{game_id}"
     @game_ref.once('value', @_inc_player_count)
-    @players_ref  = new Firebase "http://#{process.env.FIREBASE_ENDPOINT}/games/#{game_id}/players"
-    @guesses_ref  = new Firebase "http://#{process.env.FIREBASE_ENDPOINT}/games/#{game_id}/guesses"
-    @votes_ref    = new Firebase "http://#{process.env.FIREBASE_ENDPOINT}/games/#{game_id}/votes"
-    @points_ref    = new Firebase "http://#{process.env.FIREBASE_ENDPOINT}/games/#{game_id}/points"
+    @players_ref  = @game_ref.child "players"
+    @guesses_ref  = @game_ref.child "guesses"
+    @votes_ref    = @game_ref.child "votes"
+    @points_ref   = @game_ref.child "points"
     player = {
       fb_id: @fb_id
     }
