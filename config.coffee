@@ -1,0 +1,1 @@
+exports.player_cap = 5

@@ -1,5 +1,6 @@
 {ScoreCalculator} = require './score_calculator'
 Firebase = require 'firebase'
+config = require './config'
 
 class GameStateMachine
   constructor: (game_ref, player_cap = 5) ->
@@ -9,6 +10,7 @@ class GameStateMachine
     @matchmaking_factor = 1
     @playing_factor = 10 # how much longer is a round than the base as a factor
     @voting_factor = 2
+    @first_run = true
 
     @calc = new ScoreCalculator(@player_cap)
     @guesses_node = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games/#{@id}/guesses"
@@ -18,6 +20,10 @@ class GameStateMachine
 
   update: (game) => 
     @game = game.val()
+    if @first_run
+      @first_run = false
+      @players_node.on('child_added', @_assign_role)
+
     switch @game.state
       when "matchmaking" then @_matchmaking()
       when "picking_colour" then @_picking_colour()
@@ -59,6 +65,7 @@ class GameStateMachine
   #### TRANSITITIONS ####
 
   _move_to_picking: =>
+    @players_node.off('child_added', @_assign_role)
     @_set_state("picking_colour")
     @timeout_id = setTimeout(@_move_to_playing, @timeout_length * @matchmaking_factor)    
 
@@ -82,6 +89,12 @@ class GameStateMachine
     @_set_state("summary")
 
   #### UTILITY ####
+
+  _assign_role: (new_player) ->
+    if Math.random(1) > ((config.player_cap - 1) / config.player_cap)
+      new_player.child('role').set('guesser')
+    else
+      new_player.child('role').set('drawer')
 
   _check_guess: (new_guess) -> 
     if new_guess.val().guess is @game.word
