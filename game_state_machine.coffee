@@ -9,7 +9,8 @@ class GameStateMachine
     @matchmaking_factor = 1
     @playing_factor = 10 # how much longer is a round than the base as a factor
     @voting_factor = 2
-    @calc = new ScoreCalculator
+
+    @calc = new ScoreCalculator(@player_cap)
     @guesses_node = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games/#{@id}/guesses"
     @state_node   = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games/#{@id}/state"
     @players_node = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games/#{@id}/players"
@@ -52,7 +53,8 @@ class GameStateMachine
   # transition on: player leaves
   _summary: =>
     console.log("_summary")
-    @_calculate_scores()
+    # not sure if we need this just yet
+    #@_calculate_scores()
 
   #### TRANSITITIONS ####
 
@@ -70,7 +72,8 @@ class GameStateMachine
   _move_to_voting: =>
     clearTimeout(@timeout_id)
     @timeout_id = setTimeout(@_move_to_summary, @timeout_length * @voting_factor)
-    @guesses_node.off("child_added", @_check_guess)
+    guesses_node.off("child_added", @_check_guess)
+    players_node.on('child_added', @_update_scores)
     @_set_state("voting")
     @votes_node.on("child_added", @_check_vote)
 
@@ -91,7 +94,7 @@ class GameStateMachine
   _set_state: (new_state) ->
     @state_node.set(new_state)
 
-  _calculate_scores: ->
-    # write me
+  _update_scores: (snapshot) ->
+    @
 
 exports.GameStateMachine = GameStateMachine

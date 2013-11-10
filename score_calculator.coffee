@@ -1,6 +1,16 @@
 class ScoreCalculator
-  constructor: ->
-  calculate: (favourites, word_difficulty = 1) ->
-    (Math.pow((5 * favourites),2) + 10) * word_difficulty 
+  constructor: (players, word_difficulty = 10) ->
+  	@player_count = players
+  	@word_difficulty = word_difficulty
+  	@votes = {}
 
-exports.ScoreCalculator = ScoreCalculator
+  add_score: (player, vote) ->
+  	@votes[player] == null ? @votes[player] = 1 : @votes[player] += vote
+
+  should_calculate: ->
+  	Object.keys(@votes).length == @player_count
+
+  _calculate: (player) ->
+    (Math.pow((5 * votes[player]),2) + 10) * @word_difficulty 
+
+exports.ScoreCalculator = ScoreCalculator	
