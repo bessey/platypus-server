@@ -1,6 +1,4 @@
 Firebase    = require 'firebase'
-querystring = require 'querystring'
-http        = require 'http'
 {DummyPlayer} = require './dummy_player'
 
 test_mass_join = ->
