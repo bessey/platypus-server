@@ -28,7 +28,7 @@ class MatchMaker
       state: "picking_colour",
       players: players
     }
-    @p_c = 0
+    @player_count = 0
     game_ref = @game_list.push()
     game_ref.set(game)  
 
@@ -54,11 +54,11 @@ class MatchMaker
     word_node.set(word)
 
   _role: ->
-    @p_c =+ 1
+    @player_count =+ 1
     if not @guesser_set? and Math.random(1) > ((config.player_cap - 1) / config.player_cap)
       @guesser_set = true
       return 'guesser'
-    else if not @guesser_set? and @players is config.player_cap
+    else if not @guesser_set? and @player_count is config.player_cap
       return 'guesser'
     else
       return 'drawer'
