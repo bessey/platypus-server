@@ -1,0 +1,1 @@
+FIREBASE_ENDPOINT="platypus-launchhack-test.firebaseIO.com" coffee ../platypus.coffee
