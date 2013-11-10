@@ -77,3 +77,5 @@ class DummyPlayer
   _inc_player_count: (game_ref) ->
     incremented = game_ref.val().player_count + 1
     game_ref.set(player_count: incremented)
+
+exports.DummyPlayer = DummyPlayer
