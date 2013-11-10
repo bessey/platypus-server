@@ -67,17 +67,20 @@ class GameStateMachine
   _move_to_picking: =>
     @players_node.off('child_added', @_assign_role)
     @_set_state("picking_colour")
-    @timeout_id = setTimeout(@_move_to_playing, @timeout_length * @matchmaking_factor)    
+    @timeout_id = setTimeout(@_move_to_playing, @timeout_length * config.factors.matchmaking)    
 
   _move_to_playing: =>
     clearTimeout(@timeout_id)
-    @timeout_id = setTimeout(@_move_to_voting, @timeout_length * @playing_factor)
+
+    if config.factors.playing > 0
+      @timeout_id = setTimeout(@_move_to_voting, @timeout_length * config.factors.playing)
+
     @guesses_node.on("child_added", @_check_guess)
     @_set_state("playing")
 
   _move_to_voting: =>
     clearTimeout(@timeout_id)
-    @timeout_id = setTimeout(@_move_to_summary, @timeout_length * @voting_factor)
+    @timeout_id = setTimeout(@_move_to_summary, @timeout_length * config.factors.voting)
     @guesses_node.off("child_added", @_check_guess)
     @players_node.on('child_added', @_update_scores)
     @_set_state("voting")
