@@ -49,11 +49,7 @@ class DummyPlayer
     @guesses_ref  = @game_ref.child "guesses"
     @votes_ref    = @game_ref.child "votes"
     @points_ref   = @game_ref.child "points"
-    player = {
-      fb_id: @fb_id
-    }
-    @my_ref = @players_ref.push()
-    @my_ref.set(player)
+    @my_ref = @players_ref.child(@fb_id)
     console.log ("#{@fb_id} \t has joined #{game_id} successfully")
 
   listen_on_state_change: (change_callback) =>

@@ -23,21 +23,18 @@ class MatchMaker
       started_at: new Date().getTime(),
       state: "picking_colour"
     }
-    players = {}
     @p_c = 0
-    for fb_id, response in @constructor.UNMATCHED_PLAYERS
-      players[fb_id] = {
-        fb_id: fb_id,
-        role: @_role(),
-      }
-    game.players = players
     game_ref = @game_list.push()
-    game_ref.set(game)
+    game_ref.set(game)  
+
     @dict.random_word(game_ref.name(), @_word_assigner)
     state_machine = new GameStateMachine(game_ref)
     game_ref.on('value', state_machine.update)
 
+    console.log(game_ref)
     for fb_id, response of @constructor.UNMATCHED_PLAYERS
+      player_ref = new Firebase "https://#{process.env.FIREBASE_ENDPOINT}/games/#{game_ref.name()}/players/#{fb_id}"
+      player_ref.set(role: @_role())
       @_respond_to fb_id, response, game_ref.name()
 
     @constructor.UNMATCHED_PLAYERS = {}
