@@ -1,7 +1,7 @@
 Firebase    = require 'firebase'
 querystring = require 'querystring'
 http        = require 'http'
-dummy_player = require './dummy_player'
+{DummyPlayer} = require './dummy_player'
 
 stress_test_room_creation = ->
 
