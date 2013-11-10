@@ -16,6 +16,7 @@ app.get '/', (req, res) ->
 
 app.post '/match-make', (req, res) ->
   req.connection.setTimeout(60000 * 5)
+  req.socket.setTimeout(60000 * 5);
   fb_id = req.body.fb_id || null
   matcher.match(fb_id, res)
 

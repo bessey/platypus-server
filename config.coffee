@@ -1,4 +1,4 @@
-exports.player_cap = 5
+exports.player_cap = 1
 exports.factors = {
 	matchmaking: 1,
 	playing: 10,
